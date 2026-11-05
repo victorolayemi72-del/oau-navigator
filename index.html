@@ -165,8 +165,8 @@
 
     .quick-actions {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 9px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
       margin-top: 17px;
     }
 
@@ -174,21 +174,28 @@
       background: #122b4d;
       border: 1px solid #263e5d;
       border-radius: 12px;
-      padding: 13px 5px;
+      padding: 14px 5px;
       text-align: center;
-      font-size: 11px;
+      font-size: 12px;
       color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .action:active {
+      background: #25466c;
+      transform: scale(0.97);
     }
 
     .action div {
-      font-size: 22px;
+      font-size: 23px;
       margin-bottom: 7px;
     }
 
     .location-btn {
       position: absolute;
       right: 17px;
-      bottom: 235px;
+      bottom: 260px;
       z-index: 3;
       width: 46px;
       height: 46px;
@@ -198,10 +205,11 @@
       color: #102849;
       font-size: 22px;
       box-shadow: 0 3px 12px #0004;
+      cursor: pointer;
     }
 
     .maplibregl-ctrl-bottom-right {
-      bottom: 215px;
+      bottom: 250px;
     }
 
     @media (max-height: 650px) {
@@ -211,11 +219,15 @@
       }
 
       .action {
-        padding: 8px 4px;
+        padding: 9px 4px;
       }
 
       .location-btn {
-        bottom: 190px;
+        bottom: 210px;
+      }
+
+      .maplibregl-ctrl-bottom-right {
+        bottom: 200px;
       }
     }
   </style>
@@ -226,33 +238,54 @@
 <header>
   <div class="brand">
     <div class="logo">O</div>
+
     <div>
       <h1>OAU NAVIGATOR</h1>
-      <div class="tagline">Explore Great Ife. Find your Way... To the home of struggles</div>
+      <div class="tagline">
+        Explore Great Ife. Find your Way... To the home of struggles
+      </div>
     </div>
   </div>
+
   <div class="profile">👤</div>
 </header>
 
 <div id="map"></div>
 
 <div class="search-panel">
+
   <div class="search-row">
     <span class="search-icon">⌕</span>
-    <input id="destination" type="search"
-      placeholder="Where do you want to go?">
+
+    <input
+      id="destination"
+      type="search"
+      placeholder="Where do you want to go?"
+    >
+
     <button id="searchBtn">Search</button>
   </div>
+
   <div id="results"></div>
+
 </div>
 
-<button class="location-btn" id="locateBtn" title="My location">◎</button>
+<button class="location-btn" id="locateBtn" title="My location">
+  ◎
+</button>
 
 <div class="quick-panel">
-  <div class="welcome">Welcome to <span>Great Ife!</span></div>
-  <div class="subtitle">Discover places and explore the OAU estate.</div>
+
+  <div class="welcome">
+    Welcome to <span>Great Ife!</span>
+  </div>
+
+  <div class="subtitle">
+    Discover places and explore the OAU estate.
+  </div>
 
   <div class="quick-actions">
+
     <div class="action" id="campusBtn">
       <div>🏛️</div>
       Campus
@@ -267,37 +300,57 @@
       <div>🏥</div>
       Hospital
     </div>
+
+    <div class="action" id="shuttleBtn">
+      <div>🚌</div>
+      Shuttles
+    </div>
+
   </div>
+
 </div>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 
 <script>
-  // Approximate centre of Obafemi Awolowo University.
+
+  // Approximate centre of OAU.
+
   const OAU_CENTER = [4.5275, 7.5150];
 
   const map = new maplibregl.Map({
+
     container: 'map',
+
     style: {
       version: 8,
+
       sources: {
         osm: {
           type: 'raster',
+
           tiles: [
             'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
           ],
+
           tileSize: 256,
+
           attribution: '© OpenStreetMap contributors'
         }
       },
-      layers: [{
-        id: 'osm-layer',
-        type: 'raster',
-        source: 'osm'
-      }]
+
+      layers: [
+        {
+          id: 'osm-layer',
+          type: 'raster',
+          source: 'osm'
+        }
+      ]
     },
+
     center: OAU_CENTER,
     zoom: 14
+
   });
 
   map.addControl(
@@ -305,23 +358,36 @@
     'bottom-right'
   );
 
-  new maplibregl.Marker({ color: '#d6a83d' })
-    .setLngLat(OAU_CENTER)
-    .setPopup(
-      new maplibregl.Popup().setHTML(
-        '<strong>Obafemi Awolowo University</strong><br>Great Ife'
-      )
+  // OAU marker.
+
+  new maplibregl.Marker({
+    color: '#d6a83d'
+  })
+
+  .setLngLat(OAU_CENTER)
+
+  .setPopup(
+    new maplibregl.Popup().setHTML(
+      '<strong>Obafemi Awolowo University</strong><br>Great Ife'
     )
-    .addTo(map);
+  )
+
+  .addTo(map);
+
+
+  // CURRENT LOCATION.
 
   document.getElementById('locateBtn').onclick = () => {
+
     if (!navigator.geolocation) {
       alert('Location is not supported on this device.');
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
+
       position => {
+
         const coordinates = [
           position.coords.longitude,
           position.coords.latitude
@@ -333,18 +399,38 @@
           essential: true
         });
 
-        new maplibregl.Marker({ color: '#168b54' })
-          .setLngLat(coordinates)
-          .setPopup('Your current location')
-          .addTo(map);
+        new maplibregl.Marker({
+          color: '#168b54'
+        })
+
+        .setLngLat(coordinates)
+
+        .setPopup('Your current location')
+
+        .addTo(map);
+
       },
-      () => alert('Unable to access your location. Check your location permission.')
+
+      () => {
+        alert(
+          'Unable to access your location. Check your location permission.'
+        );
+      }
+
     );
+
   };
 
+
+  // DESTINATION SEARCH.
+
   async function searchPlaces() {
-    const query = document.getElementById('destination').value.trim();
-    const results = document.getElementById('results');
+
+    const query =
+      document.getElementById('destination').value.trim();
+
+    const results =
+      document.getElementById('results');
 
     if (!query) {
       results.textContent = 'Enter a destination first.';
@@ -354,11 +440,15 @@
     results.textContent = 'Searching...';
 
     try {
+
       const url =
         'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' +
-        encodeURIComponent(query + ', OAU, Ile-Ife, Nigeria');
+        encodeURIComponent(
+          query + ', OAU, Ile-Ife, Nigeria'
+        );
 
       const response = await fetch(url);
+
       const places = await response.json();
 
       results.innerHTML = '';
@@ -369,11 +459,15 @@
       }
 
       places.forEach(place => {
+
         const item = document.createElement('div');
+
         item.className = 'result';
+
         item.textContent = place.display_name;
 
         item.onclick = () => {
+
           const coordinates = [
             Number(place.lon),
             Number(place.lat)
@@ -384,40 +478,82 @@
             zoom: 17
           });
 
-          new maplibregl.Marker({ color: '#d6a83d' })
-            .setLngLat(coordinates)
-            .addTo(map);
+          new maplibregl.Marker({
+            color: '#d6a83d'
+          })
+
+          .setLngLat(coordinates)
+
+          .addTo(map);
 
           results.innerHTML = '';
+
         };
 
         results.appendChild(item);
+
       });
 
     } catch (error) {
-      results.textContent = 'Search failed. Check your internet connection.';
+
+      results.textContent =
+        'Search failed. Check your internet connection.';
+
     }
+
   }
 
   document.getElementById('searchBtn').onclick = searchPlaces;
 
   document.getElementById('destination')
     .addEventListener('keydown', event => {
-      if (event.key === 'Enter') searchPlaces();
+
+      if (event.key === 'Enter') {
+        searchPlaces();
+      }
+
     });
 
+
+  // QUICK ACCESS BUTTONS.
+
   document.getElementById('campusBtn').onclick = () => {
-    map.flyTo({ center: OAU_CENTER, zoom: 15 });
+
+    map.flyTo({
+      center: OAU_CENTER,
+      zoom: 15
+    });
+
   };
+
 
   document.getElementById('hostelBtn').onclick = () => {
-    alert('Hostel locations will be added to the campus directory.');
+
+    alert(
+      'OAU hostel directory is coming soon.'
+    );
+
   };
 
+
   document.getElementById('hospitalBtn').onclick = () => {
-    alert('Teaching hospital locations will be added to the campus directory.');
+
+    alert(
+      'OAU Teaching Hospital locations are coming soon.'
+    );
+
   };
+
+
+  document.getElementById('shuttleBtn').onclick = () => {
+
+    alert(
+      'OAU Shuttle Transport: Bus stops and shuttle routes are coming soon.'
+    );
+
+  };
+
 </script>
 
 </body>
-  </html>
+</html>
