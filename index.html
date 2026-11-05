@@ -1,236 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07172f">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07172f">
 
-  <title>OAU Navigator</title>
+<title>OAU Navigator</title>
 
-  <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #07172f;
-      color: white;
-      overflow: hidden;
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: #07172f;
+  color: white;
+}
 
-    header {
-      height: 75px;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #07172f;
-      position: relative;
-      z-index: 5;
-    }
+header {
+  height: 75px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #07172f;
+  position: relative;
+  z-index: 5;
+}
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    .logo {
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
-      background: linear-gradient(145deg, #f5c75e, #b78321);
-      display: grid;
-      place-items: center;
-      color: #07172f;
-      font-weight: bold;
-      font-size: 21px;
-    }
+.logo {
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  background: linear-gradient(145deg,#f5c75e,#b78321);
+  display: grid;
+  place-items: center;
+  color: #07172f;
+  font-size: 22px;
+  font-weight: bold;
+}
 
-    h1 {
-      font-size: 19px;
-      color: #f4c75e;
-    }
+h1 {
+  font-size: 18px;
+  color: #f4c75e;
+}
 
-    .tagline {
-      font-size: 9px;
-      margin-top: 4px;
-      color: #c5cede;
-    }
+.tagline {
+  font-size: 9px;
+  margin-top: 4px;
+  color: #c5cede;
+}
 
-    .profile {
-      width: 39px;
-      height: 39px;
-      border: 1px solid #d9ad49;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 18px;
-    }
+.profile {
+  width: 39px;
+  height: 39px;
+  border: 1px solid #d9ad49;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
 
-    #map {
-      position: absolute;
-      top: 75px;
-      bottom: 0;
-      width: 100%;
-    }
+#map {
+  position: fixed;
+  top: 75px;
+  bottom: 0;
+  width: 100%;
+}
 
-    .search-panel {
-      position: absolute;
-      top: 91px;
-      left: 14px;
-      right: 14px;
-      z-index: 3;
-      background: white;
-      padding: 13px;
-      border-radius: 16px;
-      box-shadow: 0 5px 25px #0005;
-    }
+.search-panel {
+  position: fixed;
+  top: 90px;
+  left: 13px;
+  right: 13px;
+  z-index: 3;
+  background: white;
+  padding: 12px;
+  border-radius: 15px;
+}
 
-    .search-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+.search-row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
 
-    .search-icon {
-      color: #a77b24;
-      font-size: 20px;
-    }
+input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  color: #17243a;
+  font-size: 14px;
+}
 
-    input {
-      border: none;
-      outline: none;
-      flex: 1;
-      font-size: 14px;
-      color: #17243a;
-      min-width: 0;
-    }
+button {
+  cursor: pointer;
+}
 
-    #searchBtn {
-      border: none;
-      background: #102849;
-      color: #f4c75e;
-      padding: 10px 13px;
-      border-radius: 9px;
-      font-weight: bold;
-    }
+#searchBtn {
+  border: none;
+  background: #102849;
+  color: #f4c75e;
+  padding: 10px 13px;
+  border-radius: 8px;
+  font-weight: bold;
+}
 
-    #results {
-      color: #17243a;
-      font-size: 13px;
-      margin-top: 8px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
+#results {
+  color: #17243a;
+  font-size: 12px;
+  max-height: 130px;
+  overflow-y: auto;
+}
 
-    .result {
-      padding: 10px 5px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
+.result {
+  padding: 10px 4px;
+  border-bottom: 1px solid #eee;
+}
 
-    .quick-panel {
-      position: absolute;
-      bottom: 22px;
-      left: 14px;
-      right: 14px;
-      z-index: 3;
-      background: #081a34;
-      border: 1px solid #b88c36;
-      border-radius: 18px;
-      padding: 17px;
-      box-shadow: 0 5px 25px #0006;
-    }
+.quick-panel {
+  position: fixed;
+  bottom: 18px;
+  left: 13px;
+  right: 13px;
+  z-index: 3;
+  background: #081a34;
+  border: 1px solid #b88c36;
+  border-radius: 18px;
+  padding: 16px;
+}
 
-    .welcome {
-      font-size: 16px;
-      font-weight: bold;
-    }
+.welcome {
+  font-size: 16px;
+  font-weight: bold;
+}
 
-    .welcome span {
-      color: #f4c75e;
-    }
+.welcome span {
+  color: #f4c75e;
+}
 
-    .subtitle {
-      color: #c0c9d6;
-      font-size: 11px;
-      margin-top: 6px;
-    }
+.subtitle {
+  font-size: 11px;
+  color: #c0c9d6;
+  margin-top: 6px;
+}
 
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 17px;
-    }
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 9px;
+  margin-top: 15px;
+}
 
-    .action {
-      background: #122b4d;
-      border: 1px solid #263e5d;
-      border-radius: 12px;
-      padding: 14px 5px;
-      text-align: center;
-      font-size: 12px;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+.action {
+  background: #122b4d;
+  border: 1px solid #263e5d;
+  border-radius: 12px;
+  padding: 13px 5px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
 
-    .action:active {
-      background: #25466c;
-      transform: scale(0.97);
-    }
+.action div {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
 
-    .action div {
-      font-size: 23px;
-      margin-bottom: 7px;
-    }
+.location-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 245px;
+  z-index: 3;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  color: #102849;
+  font-size: 23px;
+}
 
-    .location-btn {
-      position: absolute;
-      right: 17px;
-      bottom: 260px;
-      z-index: 3;
-      width: 46px;
-      height: 46px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      color: #102849;
-      font-size: 22px;
-      box-shadow: 0 3px 12px #0004;
-      cursor: pointer;
-    }
+.maplibregl-ctrl-bottom-right {
+  bottom: 240px;
+}
 
-    .maplibregl-ctrl-bottom-right {
-      bottom: 250px;
-    }
+#shuttlePage {
+  display: none;
+  position: fixed;
+  top: 75px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  background: #07172f;
+  overflow-y: auto;
+  padding: 17px;
+}
 
-    @media (max-height: 650px) {
-      .quick-panel {
-        bottom: 10px;
-        padding: 11px;
-      }
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
-      .action {
-        padding: 9px 4px;
-      }
+.page-heading h2 {
+  color: #f4c75e;
+  font-size: 21px;
+}
 
-      .location-btn {
-        bottom: 210px;
-      }
+.back-btn {
+  background: #173252;
+  color: white;
+  border: 1px solid #b88c36;
+  padding: 9px 13px;
+  border-radius: 9px;
+}
 
-      .maplibregl-ctrl-bottom-right {
-        bottom: 200px;
-      }
-    }
-  </style>
+.shuttle-intro {
+  color: #bdc8d8;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+#routeSearch {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 15px;
+}
+
+.route-count {
+  color: #f4c75e;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.route-card {
+  background: #112b4c;
+  border: 1px solid #294361;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 11px;
+}
+
+.route-number {
+  color: #f4c75e;
+  font-size: 11px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.route-description {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.route-note {
+  font-size: 11px;
+  color: #e6c778;
+  margin-top: 8px;
+}
+
+.route-points {
+  color: #b9c6d6;
+  font-size: 11px;
+  margin-top: 7px;
+}
+
+.empty {
+  color: #c5cede;
+  text-align: center;
+  padding: 25px;
+  font-size: 13px;
+}
+
+@media(max-height:650px) {
+  .quick-panel {
+    bottom: 8px;
+    padding: 10px;
+  }
+
+  .location-btn {
+    bottom: 210px;
+  }
+
+  .maplibregl-ctrl-bottom-right {
+    bottom: 205px;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -238,7 +311,6 @@
 <header>
   <div class="brand">
     <div class="logo">O</div>
-
     <div>
       <h1>OAU NAVIGATOR</h1>
       <div class="tagline">
@@ -252,30 +324,18 @@
 
 <div id="map"></div>
 
-<div class="search-panel">
-
+<div class="search-panel" id="searchPanel">
   <div class="search-row">
-    <span class="search-icon">⌕</span>
-
-    <input
-      id="destination"
-      type="search"
-      placeholder="Where do you want to go?"
-    >
-
+    <span style="color:#a77b24;font-size:20px">⌕</span>
+    <input id="destination" placeholder="Where do you want to go?">
     <button id="searchBtn">Search</button>
   </div>
-
   <div id="results"></div>
-
 </div>
 
-<button class="location-btn" id="locateBtn" title="My location">
-  ◎
-</button>
+<button class="location-btn" id="locateBtn">◎</button>
 
-<div class="quick-panel">
-
+<div class="quick-panel" id="homePanel">
   <div class="welcome">
     Welcome to <span>Great Ife!</span>
   </div>
@@ -285,273 +345,364 @@
   </div>
 
   <div class="quick-actions">
-
     <div class="action" id="campusBtn">
-      <div>🏛️</div>
-      Campus
+      <div>🏛️</div>Campus
     </div>
 
     <div class="action" id="hostelBtn">
-      <div>🏠</div>
-      Hostels
+      <div>🏠</div>Hostels
     </div>
 
     <div class="action" id="hospitalBtn">
-      <div>🏥</div>
-      Hospital
+      <div>🏥</div>Hospital
     </div>
 
     <div class="action" id="shuttleBtn">
-      <div>🚌</div>
-      Shuttles
+      <div>🚌</div>Shuttles
     </div>
+  </div>
+</div>
 
+<!-- SHUTTLE DIRECTORY -->
+
+<section id="shuttlePage">
+
+  <div class="page-heading">
+    <h2>🚌 Shuttle Directory</h2>
+    <button class="back-btn" id="backBtn">← Map</button>
   </div>
 
-</div>
+  <p class="shuttle-intro">
+    Explore the OAU shuttle transport network.
+    Search for your starting point or destination
+    to find available routes.
+  </p>
+
+  <input
+    id="routeSearch"
+    type="search"
+    placeholder="Search routes or destinations..."
+  >
+
+  <div class="route-count" id="routeCount"></div>
+
+  <div id="routeList"></div>
+
+</section>
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 
+<!-- LOAD SHUTTLE DATABASE BEFORE MAIN SCRIPT -->
+<script src="shuttle-stops.js"></script>
+
 <script>
 
-  // Approximate centre of OAU.
+const OAU_CENTER = [4.5275, 7.5150];
 
-  const OAU_CENTER = [4.5275, 7.5150];
+const map = new maplibregl.Map({
+  container: 'map',
 
-  const map = new maplibregl.Map({
+  style: {
+    version: 8,
 
-    container: 'map',
-
-    style: {
-      version: 8,
-
-      sources: {
-        osm: {
-          type: 'raster',
-
-          tiles: [
-            'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-          ],
-
-          tileSize: 256,
-
-          attribution: '© OpenStreetMap contributors'
-        }
-      },
-
-      layers: [
-        {
-          id: 'osm-layer',
-          type: 'raster',
-          source: 'osm'
-        }
-      ]
+    sources: {
+      osm: {
+        type: 'raster',
+        tiles: [
+          'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        ],
+        tileSize: 256,
+        attribution: '© OpenStreetMap contributors'
+      }
     },
 
-    center: OAU_CENTER,
-    zoom: 14
+    layers: [{
+      id: 'osm-layer',
+      type: 'raster',
+      source: 'osm'
+    }]
+  },
 
-  });
+  center: OAU_CENTER,
+  zoom: 14
+});
 
-  map.addControl(
-    new maplibregl.NavigationControl(),
-    'bottom-right'
-  );
+map.addControl(
+  new maplibregl.NavigationControl(),
+  'bottom-right'
+);
 
-  // OAU marker.
-
-  new maplibregl.Marker({
-    color: '#d6a83d'
-  })
-
+new maplibregl.Marker({color:'#d6a83d'})
   .setLngLat(OAU_CENTER)
-
-  .setPopup(
-    new maplibregl.Popup().setHTML(
-      '<strong>Obafemi Awolowo University</strong><br>Great Ife'
-    )
-  )
-
+  .setPopup('Obafemi Awolowo University')
   .addTo(map);
 
 
-  // CURRENT LOCATION.
+// MAP MARKERS FOR COORDINATED SHUTTLE STOPS
 
-  document.getElementById('locateBtn').onclick = () => {
+function loadShuttleMarkers() {
 
-    if (!navigator.geolocation) {
-      alert('Location is not supported on this device.');
+  if (!window.OAU_SHUTTLE_DATA) return;
+
+  OAU_SHUTTLE_DATA.stops.forEach(stop => {
+
+    if (
+      typeof stop.latitude !== 'number' ||
+      typeof stop.longitude !== 'number'
+    ) return;
+
+    new maplibregl.Marker({color:'#d6a83d'})
+      .setLngLat([stop.longitude, stop.latitude])
+      .setPopup(
+        new maplibregl.Popup().setText(
+          '🚌 ' + stop.name
+        )
+      )
+      .addTo(map);
+
+  });
+
+}
+
+map.on('load', loadShuttleMarkers);
+
+
+// GPS LOCATION
+
+document.getElementById('locateBtn').onclick = () => {
+
+  navigator.geolocation.getCurrentPosition(
+
+    position => {
+
+      const coordinates = [
+        position.coords.longitude,
+        position.coords.latitude
+      ];
+
+      map.flyTo({
+        center: coordinates,
+        zoom: 17
+      });
+
+      new maplibregl.Marker({color:'#168b54'})
+        .setLngLat(coordinates)
+        .setPopup('Your location')
+        .addTo(map);
+
+    },
+
+    () => alert('Location permission unavailable.')
+
+  );
+
+};
+
+
+// DESTINATION SEARCH
+
+async function searchPlaces() {
+
+  const query = document.getElementById('destination').value.trim();
+  const results = document.getElementById('results');
+
+  if (!query) {
+    results.textContent = 'Enter a destination first.';
+    return;
+  }
+
+  results.textContent = 'Searching...';
+
+  try {
+
+    const response = await fetch(
+      'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' +
+      encodeURIComponent(query + ', OAU, Ile-Ife, Nigeria')
+    );
+
+    const places = await response.json();
+
+    results.innerHTML = '';
+
+    if (!places.length) {
+      results.textContent = 'No matching locations found.';
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
+    places.forEach(place => {
 
-      position => {
+      const item = document.createElement('div');
+      item.className = 'result';
+      item.textContent = place.display_name;
+
+      item.onclick = () => {
 
         const coordinates = [
-          position.coords.longitude,
-          position.coords.latitude
+          Number(place.lon),
+          Number(place.lat)
         ];
 
         map.flyTo({
           center: coordinates,
-          zoom: 17,
-          essential: true
+          zoom: 17
         });
 
-        new maplibregl.Marker({
-          color: '#168b54'
-        })
-
-        .setLngLat(coordinates)
-
-        .setPopup('Your current location')
-
-        .addTo(map);
-
-      },
-
-      () => {
-        alert(
-          'Unable to access your location. Check your location permission.'
-        );
-      }
-
-    );
-
-  };
-
-
-  // DESTINATION SEARCH.
-
-  async function searchPlaces() {
-
-    const query =
-      document.getElementById('destination').value.trim();
-
-    const results =
-      document.getElementById('results');
-
-    if (!query) {
-      results.textContent = 'Enter a destination first.';
-      return;
-    }
-
-    results.textContent = 'Searching...';
-
-    try {
-
-      const url =
-        'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' +
-        encodeURIComponent(
-          query + ', OAU, Ile-Ife, Nigeria'
-        );
-
-      const response = await fetch(url);
-
-      const places = await response.json();
-
-      results.innerHTML = '';
-
-      if (!places.length) {
-        results.textContent = 'No matching places found.';
-        return;
-      }
-
-      places.forEach(place => {
-
-        const item = document.createElement('div');
-
-        item.className = 'result';
-
-        item.textContent = place.display_name;
-
-        item.onclick = () => {
-
-          const coordinates = [
-            Number(place.lon),
-            Number(place.lat)
-          ];
-
-          map.flyTo({
-            center: coordinates,
-            zoom: 17
-          });
-
-          new maplibregl.Marker({
-            color: '#d6a83d'
-          })
-
+        new maplibregl.Marker({color:'#d6a83d'})
           .setLngLat(coordinates)
-
           .addTo(map);
 
-          results.innerHTML = '';
+        results.innerHTML = '';
 
-        };
+      };
 
-        results.appendChild(item);
+      results.appendChild(item);
 
-      });
+    });
 
-    } catch (error) {
+  } catch (error) {
+    results.textContent = 'Search failed. Check your internet connection.';
+  }
 
-      results.textContent =
-        'Search failed. Check your internet connection.';
+}
+
+document.getElementById('searchBtn').onclick = searchPlaces;
+
+
+// SHUTTLE DIRECTORY
+
+function displayRoutes(search = '') {
+
+  const list = document.getElementById('routeList');
+
+  const count = document.getElementById('routeCount');
+
+  list.innerHTML = '';
+
+  if (!window.OAU_SHUTTLE_DATA) {
+    list.textContent = 'Shuttle database could not be loaded.';
+    return;
+  }
+
+  const routes = OAU_SHUTTLE_DATA.routes.filter(route => {
+
+    const searchable = [
+      route.description,
+      route.from,
+      route.to,
+      ...(route.via || [])
+    ].join(' ').toLowerCase();
+
+    return searchable.includes(search.toLowerCase());
+
+  });
+
+  count.textContent = routes.length + ' shuttle routes available';
+
+  if (!routes.length) {
+    list.innerHTML = '<div class="empty">No matching routes found.</div>';
+    return;
+  }
+
+  routes.forEach(route => {
+
+    const card = document.createElement('div');
+
+    card.className = 'route-card';
+
+    const number = document.createElement('div');
+    number.className = 'route-number';
+    number.textContent = 'ROUTE ' + route.id;
+
+    const description = document.createElement('div');
+    description.className = 'route-description';
+    description.textContent = route.description;
+
+    card.appendChild(number);
+    card.appendChild(description);
+
+    if (route.via && route.via.length) {
+
+      const via = document.createElement('div');
+      via.className = 'route-points';
+
+      via.textContent = 'Intermediate locations: ' +
+        route.via.map(id => {
+          const stop = OAU_SHUTTLE_DATA.stops.find(s => s.id === id);
+          return stop ? stop.name : id;
+        }).join(' → ');
+
+      card.appendChild(via);
 
     }
 
-  }
+    if (route.restriction) {
 
-  document.getElementById('searchBtn').onclick = searchPlaces;
+      const note = document.createElement('div');
+      note.className = 'route-note';
+      note.textContent = 'Restriction: ' + route.restriction;
 
-  document.getElementById('destination')
-    .addEventListener('keydown', event => {
+      card.appendChild(note);
 
-      if (event.key === 'Enter') {
-        searchPlaces();
-      }
+    }
 
-    });
+    list.appendChild(card);
 
+  });
 
-  // QUICK ACCESS BUTTONS.
-
-  document.getElementById('campusBtn').onclick = () => {
-
-    map.flyTo({
-      center: OAU_CENTER,
-      zoom: 15
-    });
-
-  };
+}
 
 
-  document.getElementById('hostelBtn').onclick = () => {
+// OPEN SHUTTLE DIRECTORY
 
-    alert(
-      'OAU hostel directory is coming soon.'
-    );
+document.getElementById('shuttleBtn').onclick = () => {
 
-  };
+  document.getElementById('homePanel').style.display = 'none';
+  document.getElementById('searchPanel').style.display = 'none';
+  document.getElementById('locateBtn').style.display = 'none';
 
+  document.getElementById('shuttlePage').style.display = 'block';
 
-  document.getElementById('hospitalBtn').onclick = () => {
+  displayRoutes();
 
-    alert(
-      'OAU Teaching Hospital locations are coming soon.'
-    );
-
-  };
+};
 
 
-  document.getElementById('shuttleBtn').onclick = () => {
+// SEARCH ROUTES
 
-    alert(
-      'OAU Shuttle Transport: Bus stops and shuttle routes are coming soon.'
-    );
+document.getElementById('routeSearch').addEventListener(
+  'input',
+  event => displayRoutes(event.target.value)
+);
 
-  };
+
+// RETURN TO MAP
+
+document.getElementById('backBtn').onclick = () => {
+
+  document.getElementById('shuttlePage').style.display = 'none';
+
+  document.getElementById('homePanel').style.display = 'block';
+  document.getElementById('searchPanel').style.display = 'block';
+  document.getElementById('locateBtn').style.display = 'block';
+
+  map.resize();
+
+};
+
+
+// OTHER BUTTONS
+
+document.getElementById('campusBtn').onclick = () => {
+  map.flyTo({center:OAU_CENTER,zoom:15});
+};
+
+document.getElementById('hostelBtn').onclick = () => {
+  alert('Hostel directory is coming soon.');
+};
+
+document.getElementById('hospitalBtn').onclick = () => {
+  alert('Hospital directory is coming soon.');
+};
 
 </script>
 
