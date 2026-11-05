@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07172f">
+
+  <title>OAU Navigator</title>
+
+  <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #07172f;
+      color: white;
+      overflow: hidden;
+    }
+
+    header {
+      height: 75px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #07172f;
+      position: relative;
+      z-index: 5;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .logo {
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      background: linear-gradient(145deg, #f5c75e, #b78321);
+      display: grid;
+      place-items: center;
+      color: #07172f;
+      font-weight: bold;
+      font-size: 21px;
+    }
+
+    h1 {
+      font-size: 19px;
+      color: #f4c75e;
+    }
+
+    .tagline {
+      font-size: 9px;
+      margin-top: 4px;
+      color: #c5cede;
+    }
+
+    .profile {
+      width: 39px;
+      height: 39px;
+      border: 1px solid #d9ad49;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    #map {
+      position: absolute;
+      top: 75px;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .search-panel {
+      position: absolute;
+      top: 91px;
+      left: 14px;
+      right: 14px;
+      z-index: 3;
+      background: white;
+      padding: 13px;
+      border-radius: 16px;
+      box-shadow: 0 5px 25px #0005;
+    }
+
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-icon {
+      color: #a77b24;
+      font-size: 20px;
+    }
+
+    input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+      color: #17243a;
+      min-width: 0;
+    }
+
+    #searchBtn {
+      border: none;
+      background: #102849;
+      color: #f4c75e;
+      padding: 10px 13px;
+      border-radius: 9px;
+      font-weight: bold;
+    }
+
+    #results {
+      color: #17243a;
+      font-size: 13px;
+      margin-top: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .result {
+      padding: 10px 5px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .quick-panel {
+      position: absolute;
+      bottom: 22px;
+      left: 14px;
+      right: 14px;
+      z-index: 3;
+      background: #081a34;
+      border: 1px solid #b88c36;
+      border-radius: 18px;
+      padding: 17px;
+      box-shadow: 0 5px 25px #0006;
+    }
+
+    .welcome {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .welcome span {
+      color: #f4c75e;
+    }
+
+    .subtitle {
+      color: #c0c9d6;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .action {
+      background: #122b4d;
+      border: 1px solid #263e5d;
+      border-radius: 12px;
+      padding: 13px 5px;
+      text-align: center;
+      font-size: 11px;
+      color: white;
+    }
+
+    .action div {
+      font-size: 22px;
+      margin-bottom: 7px;
+    }
+
+    .location-btn {
+      position: absolute;
+      right: 17px;
+      bottom: 235px;
+      z-index: 3;
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 50%;
+      background: white;
+      color: #102849;
+      font-size: 22px;
+      box-shadow: 0 3px 12px #0004;
+    }
+
+    .maplibregl-ctrl-bottom-right {
+      bottom: 215px;
+    }
+
+    @media (max-height: 650px) {
+      .quick-panel {
+        bottom: 10px;
+        padding: 11px;
+      }
+
+      .action {
+        padding: 8px 4px;
+      }
+
+      .location-btn {
+        bottom: 190px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">O</div>
+    <div>
+      <h1>OAU NAVIGATOR</h1>
+      <div class="tagline">Explore Great Ife. Find your Way... To the home of struggles</div>
+    </div>
+  </div>
+  <div class="profile">👤</div>
+</header>
+
+<div id="map"></div>
+
+<div class="search-panel">
+  <div class="search-row">
+    <span class="search-icon">⌕</span>
+    <input id="destination" type="search"
+      placeholder="Where do you want to go?">
+    <button id="searchBtn">Search</button>
+  </div>
+  <div id="results"></div>
+</div>
+
+<button class="location-btn" id="locateBtn" title="My location">◎</button>
+
+<div class="quick-panel">
+  <div class="welcome">Welcome to <span>Great Ife!</span></div>
+  <div class="subtitle">Discover places and explore the OAU estate.</div>
+
+  <div class="quick-actions">
+    <div class="action" id="campusBtn">
+      <div>🏛️</div>
+      Campus
+    </div>
+
+    <div class="action" id="hostelBtn">
+      <div>🏠</div>
+      Hostels
+    </div>
+
+    <div class="action" id="hospitalBtn">
+      <div>🏥</div>
+      Hospital
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+
+<script>
+  // Approximate centre of Obafemi Awolowo University.
+  const OAU_CENTER = [4.5275, 7.5150];
+
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        osm: {
+          type: 'raster',
+          tiles: [
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+          ],
+          tileSize: 256,
+          attribution: '© OpenStreetMap contributors'
+        }
+      },
+      layers: [{
+        id: 'osm-layer',
+        type: 'raster',
+        source: 'osm'
+      }]
+    },
+    center: OAU_CENTER,
+    zoom: 14
+  });
+
+  map.addControl(
+    new maplibregl.NavigationControl(),
+    'bottom-right'
+  );
+
+  new maplibregl.Marker({ color: '#d6a83d' })
+    .setLngLat(OAU_CENTER)
+    .setPopup(
+      new maplibregl.Popup().setHTML(
+        '<strong>Obafemi Awolowo University</strong><br>Great Ife'
+      )
+    )
+    .addTo(map);
+
+  document.getElementById('locateBtn').onclick = () => {
+    if (!navigator.geolocation) {
+      alert('Location is not supported on this device.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const coordinates = [
+          position.coords.longitude,
+          position.coords.latitude
+        ];
+
+        map.flyTo({
+          center: coordinates,
+          zoom: 17,
+          essential: true
+        });
+
+        new maplibregl.Marker({ color: '#168b54' })
+          .setLngLat(coordinates)
+          .setPopup('Your current location')
+          .addTo(map);
+      },
+      () => alert('Unable to access your location. Check your location permission.')
+    );
+  };
+
+  async function searchPlaces() {
+    const query = document.getElementById('destination').value.trim();
+    const results = document.getElementById('results');
+
+    if (!query) {
+      results.textContent = 'Enter a destination first.';
+      return;
+    }
+
+    results.textContent = 'Searching...';
+
+    try {
+      const url =
+        'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' +
+        encodeURIComponent(query + ', OAU, Ile-Ife, Nigeria');
+
+      const response = await fetch(url);
+      const places = await response.json();
+
+      results.innerHTML = '';
+
+      if (!places.length) {
+        results.textContent = 'No matching places found.';
+        return;
+      }
+
+      places.forEach(place => {
+        const item = document.createElement('div');
+        item.className = 'result';
+        item.textContent = place.display_name;
+
+        item.onclick = () => {
+          const coordinates = [
+            Number(place.lon),
+            Number(place.lat)
+          ];
+
+          map.flyTo({
+            center: coordinates,
+            zoom: 17
+          });
+
+          new maplibregl.Marker({ color: '#d6a83d' })
+            .setLngLat(coordinates)
+            .addTo(map);
+
+          results.innerHTML = '';
+        };
+
+        results.appendChild(item);
+      });
+
+    } catch (error) {
+      results.textContent = 'Search failed. Check your internet connection.';
+    }
+  }
+
+  document.getElementById('searchBtn').onclick = searchPlaces;
+
+  document.getElementById('destination')
+    .addEventListener('keydown', event => {
+      if (event.key === 'Enter') searchPlaces();
+    });
+
+  document.getElementById('campusBtn').onclick = () => {
+    map.flyTo({ center: OAU_CENTER, zoom: 15 });
+  };
+
+  document.getElementById('hostelBtn').onclick = () => {
+    alert('Hostel locations will be added to the campus directory.');
+  };
+
+  document.getElementById('hospitalBtn').onclick = () => {
+    alert('Teaching hospital locations will be added to the campus directory.');
+  };
+</script>
+
+</body>
+  </html>
