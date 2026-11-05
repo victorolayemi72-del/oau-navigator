@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#07172f">
 
+<link rel="icon" type="image/png" href="oau-navigator-app-icon-small.png">
+<link rel="apple-touch-icon" href="oau-navigator-app-icon-small.png">
+
 <title>OAU Navigator</title>
 
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
@@ -19,7 +22,7 @@
 body {
   font-family: Arial, sans-serif;
   background: #07172f;
-  color: white;
+  color: #fff;
 }
 
 header {
@@ -37,18 +40,15 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .logo {
-  width: 43px;
-  height: 43px;
-  border-radius: 13px;
-  background: linear-gradient(145deg,#f5c75e,#b78321);
-  display: grid;
-  place-items: center;
-  color: #07172f;
-  font-size: 22px;
-  font-weight: bold;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
 }
 
 h1 {
@@ -69,6 +69,7 @@ h1 {
   border-radius: 50%;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
 }
 
 #map {
@@ -84,7 +85,7 @@ h1 {
   left: 13px;
   right: 13px;
   z-index: 3;
-  background: white;
+  background: #fff;
   padding: 12px;
   border-radius: 15px;
 }
@@ -158,7 +159,7 @@ button {
 
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 9px;
   margin-top: 15px;
 }
@@ -187,7 +188,7 @@ button {
   height: 45px;
   border: none;
   border-radius: 50%;
-  background: white;
+  background: #fff;
   color: #102849;
   font-size: 23px;
 }
@@ -223,7 +224,7 @@ button {
 
 .back-btn {
   background: #173252;
-  color: white;
+  color: #fff;
   border: 1px solid #b88c36;
   padding: 9px 13px;
   border-radius: 9px;
@@ -310,13 +311,20 @@ button {
 
 <header>
   <div class="brand">
-    <div class="logo">O</div>
+
+    <img
+      src="oau-navigator-logo-small.png"
+      class="logo"
+      alt="OAU Navigator logo"
+    >
+
     <div>
       <h1>OAU NAVIGATOR</h1>
       <div class="tagline">
         Explore Great Ife. Find your Way... To the home of struggles
       </div>
     </div>
+
   </div>
 
   <div class="profile">👤</div>
@@ -326,16 +334,25 @@ button {
 
 <div class="search-panel" id="searchPanel">
   <div class="search-row">
+
     <span style="color:#a77b24;font-size:20px">⌕</span>
-    <input id="destination" placeholder="Where do you want to go?">
+
+    <input
+      id="destination"
+      placeholder="Where do you want to go?"
+    >
+
     <button id="searchBtn">Search</button>
+
   </div>
+
   <div id="results"></div>
 </div>
 
 <button class="location-btn" id="locateBtn">◎</button>
 
 <div class="quick-panel" id="homePanel">
+
   <div class="welcome">
     Welcome to <span>Great Ife!</span>
   </div>
@@ -345,25 +362,29 @@ button {
   </div>
 
   <div class="quick-actions">
+
     <div class="action" id="campusBtn">
-      <div>🏛️</div>Campus
+      <div>🏛️</div>
+      Campus
     </div>
 
     <div class="action" id="hostelBtn">
-      <div>🏠</div>Hostels
+      <div>🏠</div>
+      Hostels
     </div>
 
     <div class="action" id="hospitalBtn">
-      <div>🏥</div>Hospital
+      <div>🏥</div>
+      Hospital
     </div>
 
     <div class="action" id="shuttleBtn">
-      <div>🚌</div>Shuttles
+      <div>🚌</div>
+      Shuttles
     </div>
+
   </div>
 </div>
-
-<!-- SHUTTLE DIRECTORY -->
 
 <section id="shuttlePage">
 
@@ -392,7 +413,6 @@ button {
 
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 
-<!-- LOAD SHUTTLE DATABASE BEFORE MAIN SCRIPT -->
 <script src="shuttle-stops.js"></script>
 
 <script>
@@ -400,6 +420,7 @@ button {
 const OAU_CENTER = [4.5275, 7.5150];
 
 const map = new maplibregl.Map({
+
   container: 'map',
 
   style: {
@@ -408,23 +429,29 @@ const map = new maplibregl.Map({
     sources: {
       osm: {
         type: 'raster',
+
         tiles: [
           'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
         ],
+
         tileSize: 256,
+
         attribution: '© OpenStreetMap contributors'
       }
     },
 
-    layers: [{
-      id: 'osm-layer',
-      type: 'raster',
-      source: 'osm'
-    }]
+    layers: [
+      {
+        id: 'osm-layer',
+        type: 'raster',
+        source: 'osm'
+      }
+    ]
   },
 
   center: OAU_CENTER,
   zoom: 14
+
 });
 
 map.addControl(
@@ -438,7 +465,7 @@ new maplibregl.Marker({color:'#d6a83d'})
   .addTo(map);
 
 
-// MAP MARKERS FOR COORDINATED SHUTTLE STOPS
+// SHUTTLE MARKERS
 
 function loadShuttleMarkers() {
 
@@ -454,9 +481,7 @@ function loadShuttleMarkers() {
     new maplibregl.Marker({color:'#d6a83d'})
       .setLngLat([stop.longitude, stop.latitude])
       .setPopup(
-        new maplibregl.Popup().setText(
-          '🚌 ' + stop.name
-        )
+        new maplibregl.Popup().setText('🚌 ' + stop.name)
       )
       .addTo(map);
 
@@ -470,6 +495,11 @@ map.on('load', loadShuttleMarkers);
 // GPS LOCATION
 
 document.getElementById('locateBtn').onclick = () => {
+
+  if (!navigator.geolocation) {
+    alert('Location is not supported by this browser.');
+    return;
+  }
 
   navigator.geolocation.getCurrentPosition(
 
@@ -503,8 +533,11 @@ document.getElementById('locateBtn').onclick = () => {
 
 async function searchPlaces() {
 
-  const query = document.getElementById('destination').value.trim();
-  const results = document.getElementById('results');
+  const query =
+    document.getElementById('destination').value.trim();
+
+  const results =
+    document.getElementById('results');
 
   if (!query) {
     results.textContent = 'Enter a destination first.';
@@ -520,6 +553,10 @@ async function searchPlaces() {
       encodeURIComponent(query + ', OAU, Ile-Ife, Nigeria')
     );
 
+    if (!response.ok) {
+      throw new Error('Search request failed');
+    }
+
     const places = await response.json();
 
     results.innerHTML = '';
@@ -532,6 +569,7 @@ async function searchPlaces() {
     places.forEach(place => {
 
       const item = document.createElement('div');
+
       item.className = 'result';
       item.textContent = place.display_name;
 
@@ -560,27 +598,45 @@ async function searchPlaces() {
     });
 
   } catch (error) {
-    results.textContent = 'Search failed. Check your internet connection.';
+
+    results.textContent =
+      'Search failed. Check your internet connection.';
+
   }
 
 }
 
 document.getElementById('searchBtn').onclick = searchPlaces;
 
+document.getElementById('destination')
+  .addEventListener('keydown', event => {
+
+    if (event.key === 'Enter') {
+      searchPlaces();
+    }
+
+  });
+
 
 // SHUTTLE DIRECTORY
 
 function displayRoutes(search = '') {
 
-  const list = document.getElementById('routeList');
+  const list =
+    document.getElementById('routeList');
 
-  const count = document.getElementById('routeCount');
+  const count =
+    document.getElementById('routeCount');
 
   list.innerHTML = '';
 
   if (!window.OAU_SHUTTLE_DATA) {
-    list.textContent = 'Shuttle database could not be loaded.';
+
+    list.textContent =
+      'Shuttle database could not be loaded.';
+
     return;
+
   }
 
   const routes = OAU_SHUTTLE_DATA.routes.filter(route => {
@@ -596,17 +652,21 @@ function displayRoutes(search = '') {
 
   });
 
-  count.textContent = routes.length + ' shuttle routes available';
+  count.textContent =
+    routes.length + ' shuttle routes available';
 
   if (!routes.length) {
-    list.innerHTML = '<div class="empty">No matching routes found.</div>';
+
+    list.innerHTML =
+      '<div class="empty">No matching routes found.</div>';
+
     return;
+
   }
 
   routes.forEach(route => {
 
     const card = document.createElement('div');
-
     card.className = 'route-card';
 
     const number = document.createElement('div');
@@ -617,18 +677,22 @@ function displayRoutes(search = '') {
     description.className = 'route-description';
     description.textContent = route.description;
 
-    card.appendChild(number);
-    card.appendChild(description);
+    card.append(number, description);
 
     if (route.via && route.via.length) {
 
       const via = document.createElement('div');
       via.className = 'route-points';
 
-      via.textContent = 'Intermediate locations: ' +
+      via.textContent =
+        'Intermediate locations: ' +
         route.via.map(id => {
-          const stop = OAU_SHUTTLE_DATA.stops.find(s => s.id === id);
+
+          const stop =
+            OAU_SHUTTLE_DATA.stops.find(s => s.id === id);
+
           return stop ? stop.name : id;
+
         }).join(' → ');
 
       card.appendChild(via);
@@ -638,8 +702,11 @@ function displayRoutes(search = '') {
     if (route.restriction) {
 
       const note = document.createElement('div');
+
       note.className = 'route-note';
-      note.textContent = 'Restriction: ' + route.restriction;
+
+      note.textContent =
+        'Restriction: ' + route.restriction;
 
       card.appendChild(note);
 
@@ -657,7 +724,9 @@ function displayRoutes(search = '') {
 document.getElementById('shuttleBtn').onclick = () => {
 
   document.getElementById('homePanel').style.display = 'none';
+
   document.getElementById('searchPanel').style.display = 'none';
+
   document.getElementById('locateBtn').style.display = 'none';
 
   document.getElementById('shuttlePage').style.display = 'block';
@@ -666,23 +735,24 @@ document.getElementById('shuttleBtn').onclick = () => {
 
 };
 
+document.getElementById('routeSearch')
+  .addEventListener('input', event => {
 
-// SEARCH ROUTES
+    displayRoutes(event.target.value);
 
-document.getElementById('routeSearch').addEventListener(
-  'input',
-  event => displayRoutes(event.target.value)
-);
+  });
 
 
-// RETURN TO MAP
+// BACK TO MAP
 
 document.getElementById('backBtn').onclick = () => {
 
   document.getElementById('shuttlePage').style.display = 'none';
 
   document.getElementById('homePanel').style.display = 'block';
+
   document.getElementById('searchPanel').style.display = 'block';
+
   document.getElementById('locateBtn').style.display = 'block';
 
   map.resize();
@@ -690,18 +760,27 @@ document.getElementById('backBtn').onclick = () => {
 };
 
 
-// OTHER BUTTONS
+// QUICK ACCESS BUTTONS
 
 document.getElementById('campusBtn').onclick = () => {
-  map.flyTo({center:OAU_CENTER,zoom:15});
+
+  map.flyTo({
+    center: OAU_CENTER,
+    zoom: 15
+  });
+
 };
 
 document.getElementById('hostelBtn').onclick = () => {
+
   alert('Hostel directory is coming soon.');
+
 };
 
 document.getElementById('hospitalBtn').onclick = () => {
+
   alert('Hospital directory is coming soon.');
+
 };
 
 </script>
